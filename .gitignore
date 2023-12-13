@@ -1,1 +1,5 @@
 go.sum
+self_key.pub
+self_key.rsa
+/cmd/key-pair/backup
+.env
