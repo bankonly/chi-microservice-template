@@ -17,11 +17,11 @@ type Session interface {
 }
 
 type SessionOpts struct {
-	services *services.Services
+	services *services.Services // All services
 }
 
-func NewSession() Session {
-	return &SessionOpts{}
+func NewSession(services *services.Services) Session {
+	return &SessionOpts{services: services}
 }
 
 // Generate session for client access (Frontend)

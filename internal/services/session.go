@@ -15,15 +15,12 @@ type Session interface {
 }
 
 type SessionOpts struct {
-	sessionCache   caches.Session
-	privateKeyPath string
-	publicKeyPath  string
+	sessionCache caches.Session
 }
 
-func NewSession() Session {
+func NewSession(sessionCache caches.Session) Session {
 	return &SessionOpts{
-		privateKeyPath: "./self_key/self_key.rsa",
-		publicKeyPath:  "./self_key/self_key.pub",
+		sessionCache: sessionCache,
 	}
 }
 

@@ -2,7 +2,7 @@ package storages
 
 import (
 	"database/sql"
-	envConf "ecm-api-template/internal/configs/env-conf"
+	"ecm-api-template/internal/configs"
 	"log"
 	"strings"
 
@@ -30,9 +30,9 @@ func BeginTxnReadUncommitted() *gorm.DB {
 
 func NewPostgres() {
 	var err error
-	db, err = gorm.Open(postgres.Open(envConf.ValueOf.PG_URI), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(configs.Environment.PG_URI), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("DB is connected", strings.Split(envConf.ValueOf.PG_URI, "@")[1])
+	log.Println("DB is connected", strings.Split(configs.Environment.PG_URI, "@")[1])
 }

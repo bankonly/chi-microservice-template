@@ -1,0 +1,3 @@
+session_info:
+    key: "session:info:"
+    expireMin: 120

@@ -2,7 +2,7 @@ package storages
 
 import (
 	"context"
-	envConf "ecm-api-template/internal/configs/env-conf"
+	"ecm-api-template/internal/configs"
 	"log"
 
 	"github.com/redis/go-redis/v9"
@@ -18,7 +18,7 @@ func GetRedis() *redis.Client {
 }
 
 func NewRedis() {
-	redisOpts, err := redis.ParseURL(envConf.ValueOf.REDIS_URI)
+	redisOpts, err := redis.ParseURL(configs.Environment.REDIS_URI)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,5 +29,5 @@ func NewRedis() {
 	if cmd.Err() != nil {
 		log.Fatal("Redis ping failed ", cmd.Err())
 	}
-	log.Println("Redis is connected,", envConf.ValueOf.REDIS_URI)
+	log.Println("Redis is connected,", configs.Environment.REDIS_URI)
 }
