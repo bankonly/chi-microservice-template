@@ -24,25 +24,25 @@ func NewSession(services *services.Services) Session {
 
 // Generate session for client access (Frontend)
 func (opts *SessionOpts) GenSession(w http.ResponseWriter, r *http.Request) {
-	writer := writers.Writer(w, r)
+	writer := writers.New(w, r)
 
 	vector := r.Header.Get("iv")
-	sessionId := r.Header.Get("session-id")
+	sessionId := r.Header.Get("enk-session")
 	enk := r.Header.Get("enk")
 
 	// Call session service to gen session
-	_, err := opts.services.Session.GenSession(writer.RequestId(), vector, sessionId, enk)
+	data, err := opts.services.Session.GenSession(writer.RequestId(), vector, sessionId, enk)
 	if err != nil {
 		writer.ParseError(err)
 		return
 	}
 
-	writer.Message("session_generated")
+	writer.JSON(data)
 }
 
 // Microservice from another microservice
 func (opts *SessionOpts) GetSession(w http.ResponseWriter, r *http.Request) {
-	writer := writers.Writer(w, r)
+	writer := writers.New(w, r)
 
 	// Call session service to get session
 	opts.services.Session.GetSession(writer.RequestId())

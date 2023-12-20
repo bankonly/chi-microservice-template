@@ -9,7 +9,7 @@ import (
 func ErrorHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
-			writer := writers.Writer(w, r)
+			writer := writers.New(w, r)
 			if r := recover(); r != nil {
 				err := r.(string)
 				writer.Status(http.StatusInternalServerError)

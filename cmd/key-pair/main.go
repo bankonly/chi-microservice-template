@@ -9,7 +9,6 @@ import (
 
 func main() {
 	configs.LoadEnvironmentConf()
-	configs.LoadRSAConf()
 
 	err := encryption.NewRSA(encryption.RSAConfig{
 		Filename:        configs.Environment.KEY_NAME,
@@ -19,6 +18,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	configs.LoadRSAConf()
+
+	encData, err := encryption.RSAEncAESRandomKey("f933d0b8-8002-4623-8330-62943d95b359")
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("IV =", encData.EncryptedData.IvInfo.IvString)
+	log.Println("ENK-SESSION =", encData.EncryptedData.Data)
+	log.Println("ENK =", encData.EncryptKey)
 
 	log.Println("Key-Pair Generated")
 }

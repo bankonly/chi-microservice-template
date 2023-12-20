@@ -18,7 +18,7 @@ func New(services *services.Services) *Handlers {
 }
 
 func (opts *Handlers) HealthCheck(w http.ResponseWriter, r *http.Request) {
-	writer := writers.Writer(w, r)
+	writer := writers.New(w, r)
 	writers.AssignLog(writer.RequestId(), map[string]interface{}{
 		"index": "Server is running",
 	})

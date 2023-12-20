@@ -3,7 +3,7 @@ package middlewares
 import (
 	"ecm-api-template/internal/caches"
 	"ecm-api-template/internal/configs"
-	errorConf "ecm-api-template/internal/configs/error-conf"
+	messageConf "ecm-api-template/internal/configs/message-conf"
 	"ecm-api-template/pkg/storages"
 	"net/http"
 
@@ -18,25 +18,25 @@ func VerifySession(next http.Handler) http.Handler {
 			return
 		}
 
-		writer := writers.Writer(w, r)
+		writer := writers.New(w, r)
 		vector := r.Header.Get("iv")
-		sessionId := r.Header.Get("session-id")
+		token := r.Header.Get("authorization")
 		enk := r.Header.Get("enk")
 
-		if vector == "" || sessionId == "" || enk == "" {
-			writer.Forbidden(errorConf.StrErrSessionDenied1)
+		if vector == "" || token == "" || enk == "" {
+			writer.Forbidden(messageConf.ErrSessionDenied1)
 			return
 		}
 
 		sessionMem := caches.NewSession(storages.GetRedis())
 		if existedVector := sessionMem.GetVector(writer.RequestId(), vector); existedVector == vector {
-			writer.Forbidden(errorConf.StrErrSessionDenied2)
+			writer.Forbidden(messageConf.ErrSessionDenied2)
 			return
 		}
 
 		// Save request vector
 		if err := sessionMem.SaveVector(writer.RequestId(), vector); err != nil {
-			writer.InternalServerError(errorConf.StrErrSessionDenied3)
+			writer.InternalServerError(messageConf.ErrSessionDenied3)
 			return
 		}
 		next.ServeHTTP(w, r)

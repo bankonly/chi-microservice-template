@@ -7,6 +7,6 @@ import (
 )
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
-	writer := writers.Writer(w, r)
+	writer := writers.New(w, r)
 	writer.NotFound("unimplemented")
 }

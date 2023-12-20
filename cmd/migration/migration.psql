@@ -1,0 +1,29 @@
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE IF NOT EXISTS users (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(50) DEFAULT NULL,
+    phone VARCHAR(20) DEFAULT NULL,
+    password VARCHAR(255) NOT NULL,
+    last_login_time TIMESTAMP WITH TIME ZONE NULL,
+    gender VARCHAR(10) DEFAULT NULL,
+    status SMALLINT DEFAULT 1,
+    is_verified BOOLEAN DEFAULT FALSE,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMENT ON COLUMN users.status IS '1 = active, 2 = in-active';
+
+CREATE UNIQUE INDEX users_username_key
+	on users (username) WHERE is_deleted = false;
+
+CREATE UNIQUE INDEX users_email_key
+	on users (email) WHERE is_deleted = false;
+
+CREATE UNIQUE INDEX users_phone_key
+	on users (phone) WHERE is_deleted = false;
+
+---------------------------------------------

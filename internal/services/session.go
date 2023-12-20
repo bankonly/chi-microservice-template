@@ -9,7 +9,7 @@ import (
 )
 
 type Session interface {
-	GenSession(requestId, vector, encryptedSessionId, enk string) (*dto.GenSessionResponseDTO, error)
+	GenSession(requestId, vector, token, enk string) (*dto.GenSessionResponseDTO, error)
 	GetSession(requestId string)
 }
 
@@ -23,15 +23,15 @@ func NewSession(sessionCache caches.Session) Session {
 	}
 }
 
-func (opts *SessionOpts) GenSession(requestId, vector, encryptedSessionId, enk string) (*dto.GenSessionResponseDTO, error) {
-	sessionId, err := encryption.RSADecAESRandomKey(enk, encryptedSessionId, vector)
+func (opts *SessionOpts) GenSession(requestId, vector, token, enk string) (*dto.GenSessionResponseDTO, error) {
+	sessionId, err := encryption.RSADecAESRandomKey(enk, token, vector)
 	if err != nil {
-		return nil, errorConf.ErrBadParemeter
+		return nil, errorConf.ErrBadParameter
 	}
 
 	err = opts.sessionCache.Save(requestId, sessionId, "")
 	if err != nil {
-		return nil, errorConf.ErrBadParemeter
+		return nil, errorConf.ErrBadParameter
 	}
 
 	res := dto.GenSessionResponseDTO{

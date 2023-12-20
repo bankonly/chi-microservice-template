@@ -5,3 +5,4 @@ self-key.rsa
 .env
 __debug_bin*
 .vscode
+internal/models/entity
