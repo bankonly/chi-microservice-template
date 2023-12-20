@@ -7,8 +7,8 @@ type GenSessionRequestDTO struct {
 }
 
 type GenSessionResponseDTO struct {
-	SessionId     string `json:"session_id"`
-	PlainSessinId string `json:"-"`
+	SessionId      string `json:"session_id"`
+	PlainSessionId string `json:"-"`
 }
 
 type GetKeyPairResponseDTO struct {

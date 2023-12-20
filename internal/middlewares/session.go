@@ -12,31 +12,31 @@ import (
 
 func VerifySession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writer := writers.New(w, r)
+		vector := r.Header.Get("iv")
+		sessionInfo := r.Header.Get("enk-session")
+		enk := r.Header.Get("enk")
+
+		if vector == "" || sessionInfo == "" || enk == "" {
+			writer.Forbidden(messageConf.ErrCredentialEmpty)
+			return
+		}
+
 		// Development will be bypass
 		if configs.Environment.MODE == configs.AppConf.DevLabel {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		writer := writers.New(w, r)
-		vector := r.Header.Get("iv")
-		token := r.Header.Get("authorization")
-		enk := r.Header.Get("enk")
-
-		if vector == "" || token == "" || enk == "" {
-			writer.Forbidden(messageConf.ErrSessionDenied1)
-			return
-		}
-
 		sessionMem := caches.NewSession(storages.GetRedis())
 		if existedVector := sessionMem.GetVector(writer.RequestId(), vector); existedVector == vector {
-			writer.Forbidden(messageConf.ErrSessionDenied2)
+			writer.Forbidden(messageConf.ErrSessionDuplicated)
 			return
 		}
 
 		// Save request vector
 		if err := sessionMem.SaveVector(writer.RequestId(), vector); err != nil {
-			writer.InternalServerError(messageConf.ErrSessionDenied3)
+			writer.InternalServerError(messageConf.ErrSessionInternalFailed)
 			return
 		}
 		next.ServeHTTP(w, r)

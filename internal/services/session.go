@@ -26,17 +26,21 @@ func NewSession(sessionCache caches.Session) Session {
 func (opts *SessionOpts) GenSession(requestId, vector, token, enk string) (*dto.GenSessionResponseDTO, error) {
 	sessionId, err := encryption.RSADecAESRandomKey(enk, token, vector)
 	if err != nil {
-		return nil, errorConf.ErrBadParameter
+		return nil, errorConf.ErrAccessDenied1
+	}
+
+	if sessionId == "" {
+		return nil, errorConf.ErrAccessDenied2
 	}
 
 	err = opts.sessionCache.Save(requestId, sessionId, "")
 	if err != nil {
-		return nil, errorConf.ErrBadParameter
+		return nil, errorConf.ErrAccessDenied3
 	}
 
 	res := dto.GenSessionResponseDTO{
-		SessionId:     sessionId,
-		PlainSessinId: sessionId,
+		SessionId:      sessionId,
+		PlainSessionId: sessionId,
 	}
 
 	return &res, nil

@@ -19,7 +19,7 @@ func NewServer() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RealIP)
 	r.Use(writers.Middleware)
-	r.Use(middlewares.ErrorHandler)
+	r.Use(middlewares.Recover(configs.Environment.MODE == configs.AppConf.ProdLabel))
 	r.NotFound(middlewares.NotFound)
 	r.Use(internalMiddleware.VerifySession)
 
