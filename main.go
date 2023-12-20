@@ -9,7 +9,11 @@ import (
 )
 
 func main() {
-	configs.Load()
+	configs.LoadEnvironmentConf()
+	configs.LoadRSAConf()
+	configs.LoadRedisConf()
+	configs.LoadAppConfig()
+
 	storages.NewRedis()
 	storages.NewPostgres()
 	validator.New(validator.ValidatorConfig{})

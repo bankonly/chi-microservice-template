@@ -13,15 +13,13 @@ type RedisKeyConf struct {
 }
 
 type RedisConfig struct {
-	SessionInfo struct {
-		Key       string        `yaml:"key"`
-		ExpireMin time.Duration `yaml:"expireMin"`
-	} `yaml:"session_info"`
+	SessionInfo   RedisKeyConf `yaml:"sessionInfo"`
+	SessionVector RedisKeyConf `yaml:"sessionVector"`
 }
 
 var RedisConf RedisConfig
 
-func _LoadRedisConf() {
+func LoadRedisConf() {
 	dest := "./internal/configs/yaml/redis.yaml"
 	viper.SetConfigFile(dest)
 	if err := viper.ReadInConfig(); err != nil {

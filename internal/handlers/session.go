@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"ecm-api-template/internal/models/dto"
 	"ecm-api-template/internal/services"
 	"net/http"
 
-	"github.com/bankonly/go-pkg/v1/validator"
 	"github.com/bankonly/go-pkg/v1/writers"
 	"github.com/go-chi/chi/v5"
 )
@@ -28,19 +26,18 @@ func NewSession(services *services.Services) Session {
 func (opts *SessionOpts) GenSession(w http.ResponseWriter, r *http.Request) {
 	writer := writers.Writer(w, r)
 
-	var body dto.GenSessionRequestDTO
-	if err := validator.Parser(r.Body, &body); err != nil {
-		writer.BadRequest(err.Error())
-		return
-	}
+	vector := r.Header.Get("iv")
+	sessionId := r.Header.Get("session-id")
+	enk := r.Header.Get("enk")
 
 	// Call session service to gen session
-	res, err := opts.services.Session.GenSession(writer.RequestId(), &body)
+	_, err := opts.services.Session.GenSession(writer.RequestId(), vector, sessionId, enk)
 	if err != nil {
 		writer.ParseError(err)
 		return
 	}
-	writer.JSON(res)
+
+	writer.Message("session_generated")
 }
 
 // Microservice from another microservice
@@ -55,5 +52,5 @@ func (opts *SessionOpts) GetSession(w http.ResponseWriter, r *http.Request) {
 // All routers
 func (opts *SessionOpts) Route(r chi.Router) {
 	r.Get("/", opts.GetSession)
-	r.Get("/generate", opts.GenSession)
+	r.Post("/generate", opts.GenSession)
 }

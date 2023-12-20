@@ -12,6 +12,8 @@ import (
 type Session interface {
 	Save(requestId, sessionId, publicKey string) error
 	GetSession(requestId, sessionId string) string
+	SaveVector(requestId, vector string) error
+	GetVector(requestId, vector string) string
 }
 
 type SessionOpts struct {
@@ -36,6 +38,24 @@ func (opts *SessionOpts) GetSession(requestId, sessionId string) string {
 	result, err := opts.redisCli.Get(context.Background(), key).Result()
 	if err != nil {
 		writers.Console(requestId, "Cache.Session.GetSession: "+err.Error())
+	}
+	return result
+}
+
+func (opts *SessionOpts) SaveVector(requestId, vector string) error {
+	key := configs.RedisConf.SessionVector.Key + vector
+	err := opts.redisCli.Set(context.Background(), key, []byte(vector), time.Minute*configs.RedisConf.SessionVector.ExpireMin).Err()
+	if err != nil {
+		writers.Console(requestId, "Cache.Session.SaveVector: "+err.Error())
+	}
+	return err
+}
+
+func (opts *SessionOpts) GetVector(requestId, vector string) string {
+	key := configs.RedisConf.SessionVector.Key + vector
+	result, err := opts.redisCli.Get(context.Background(), key).Result()
+	if err != nil {
+		writers.Console(requestId, "Cache.Session.GetVector: "+err.Error())
 	}
 	return result
 }

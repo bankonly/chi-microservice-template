@@ -2,16 +2,15 @@ package services
 
 import (
 	"ecm-api-template/internal/caches"
+	errorConf "ecm-api-template/internal/configs/error-conf"
 	"ecm-api-template/internal/models/dto"
-	"os"
 
-	"github.com/bankonly/go-pkg/v1/stacktrace"
+	"github.com/bankonly/go-pkg/v1/encryption"
 )
 
 type Session interface {
-	GenSession(requestId string, body *dto.GenSessionRequestDTO) (*dto.GenSessionResponseDTO, error)
+	GenSession(requestId, vector, encryptedSessionId, enk string) (*dto.GenSessionResponseDTO, error)
 	GetSession(requestId string)
-	GetKeyPair() (*dto.GetKeyPairResponseDTO, error) // private key, public key
 }
 
 type SessionOpts struct {
@@ -24,40 +23,25 @@ func NewSession(sessionCache caches.Session) Session {
 	}
 }
 
-func (opts *SessionOpts) GenSession(requestId string, body *dto.GenSessionRequestDTO) (*dto.GenSessionResponseDTO, error) {
-	err := opts.sessionCache.Save(requestId, body.SessionID, body.PublicKey)
+func (opts *SessionOpts) GenSession(requestId, vector, encryptedSessionId, enk string) (*dto.GenSessionResponseDTO, error) {
+	sessionId, err := encryption.RSADecAESRandomKey(enk, encryptedSessionId, vector)
 	if err != nil {
-		return nil, stacktrace.BadRequest("bad_request")
+		return nil, errorConf.ErrBadParemeter
 	}
 
-	selfKey, err := opts.GetKeyPair()
+	err = opts.sessionCache.Save(requestId, sessionId, "")
 	if err != nil {
-		return nil, stacktrace.BadRequest("credential_failed")
+		return nil, errorConf.ErrBadParemeter
 	}
 
 	res := dto.GenSessionResponseDTO{
-		Data: selfKey.PublicKey,
+		SessionId:     sessionId,
+		PlainSessinId: sessionId,
 	}
+
 	return &res, nil
 }
-func (opts *SessionOpts) GetSession(requestId string) {}
 
-// Get current key pair
-func (opts *SessionOpts) GetKeyPair() (*dto.GetKeyPairResponseDTO, error) {
-	pkFile, err := os.ReadFile(opts.privateKeyPath)
-	if err != nil {
-		return nil, err
-	}
+func (opts *SessionOpts) GetSession(requestId string) {
 
-	pbkFile, err := os.ReadFile(opts.publicKeyPath)
-	if err != nil {
-		return nil, err
-	}
-
-	selfKey := dto.GetKeyPairResponseDTO{
-		PrivateKey: string(pkFile),
-		PublicKey:  string(pbkFile),
-	}
-
-	return &selfKey, nil
 }

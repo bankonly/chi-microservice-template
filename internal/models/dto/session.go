@@ -1,12 +1,14 @@
 package dto
 
 type GenSessionRequestDTO struct {
-	SessionID string `json:"session_id" conform:"trim" validate:"required,uuid4" error:"access_denied_1"`
-	PublicKey string `json:"public_key" validate:"required" error:"access_denied_2"`
+	Data string `json:"data" validate:"required" error:"access_denied_2"`
+	Enk  string `json:"enk" validate:"required" error:"access_denied_3"`
+	IV   string `json:"iv" validate:"required" error:"access_denied_4"`
 }
 
 type GenSessionResponseDTO struct {
-	Data string `json:"data"`
+	SessionId     string `json:"session_id"`
+	PlainSessinId string `json:"-"`
 }
 
 type GetKeyPairResponseDTO struct {

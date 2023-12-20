@@ -8,15 +8,18 @@ import (
 )
 
 type Environments struct {
-	PG_URI           string `env:"PG_URI,required"`
-	REDIS_URI        string `env:"REDIS_URI,required"`
-	SELF_PRIVATE_KEY string `env:"SELF_PRIVATE_KEY,required"`
-	SELF_PUBLIC_KEY  string `env:"SELF_PUBLIC_KEY,required"`
+	MODE                  string `env:"MODE,required"`
+	PORT                  string `env:"PORT,required"`
+	PG_URI                string `env:"PG_URI,required"`
+	REDIS_URI             string `env:"REDIS_URI,required"`
+	KEY_NAME              string `env:"KEY_NAME,required"`
+	SELF_PRIVATE_KEY_PATH string `env:"SELF_PRIVATE_KEY_PATH,required"`
+	SELF_PUBLIC_KEY_PATH  string `env:"SELF_PUBLIC_KEY_PATH,required"`
 }
 
 var Environment Environments
 
-func _LoadEnvironmentConf() {
+func LoadEnvironmentConf() {
 	if err := env.Parse(&Environment); err != nil {
 		log.Fatal(err.Error())
 	}

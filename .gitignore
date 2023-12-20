@@ -1,6 +1,7 @@
 go.sum
-self_key.pub
-self_key.rsa
+self-key.pub
+self-key.rsa
 /cmd/key-pair/backup
 .env
 __debug_bin*
+.vscode

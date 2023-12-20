@@ -1,3 +1,6 @@
-session_info:
+sessionInfo:
     key: "session:info:"
+    expireMin: 120
+sessionVector:
+    key: "session:vector:"
     expireMin: 120
