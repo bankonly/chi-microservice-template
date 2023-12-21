@@ -28,7 +28,7 @@ func VerifySession(next http.Handler) http.Handler {
 			return
 		}
 
-		sessionMem := caches.NewSession(storages.GetRedis())
+		sessionMem := caches.NewSessionCache(storages.GetRedis())
 		if existedVector := sessionMem.GetVector(writer.RequestId(), vector); existedVector == vector {
 			writer.Forbidden(messageConf.ErrSessionDuplicated)
 			return

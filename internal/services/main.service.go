@@ -3,11 +3,11 @@ package services
 import "ecm-api-template/internal/caches"
 
 type Services struct {
-	Session Session
+	Session SessionService
 }
 
 func New(cache *caches.Caches) *Services {
 	return &Services{
-		Session: NewSession(cache.Session),
+		Session: NewSessionService(cache.Session),
 	}
 }

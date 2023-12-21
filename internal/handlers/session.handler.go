@@ -8,22 +8,22 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-type Session interface {
+type SessionHandler interface {
 	Route(chi.Router)                                  // All routers
 	GenSession(w http.ResponseWriter, r *http.Request) // Microservice from another microservice
 	GetSession(w http.ResponseWriter, r *http.Request) // Generate session for client access (Frontend)
 }
 
-type SessionOpts struct {
+type SessionHandlerOpts struct {
 	services *services.Services // All services
 }
 
-func NewSession(services *services.Services) Session {
-	return &SessionOpts{services: services}
+func NewSessionHandler(services *services.Services) SessionHandler {
+	return &SessionHandlerOpts{services: services}
 }
 
 // Generate session for client access (Frontend)
-func (opts *SessionOpts) GenSession(w http.ResponseWriter, r *http.Request) {
+func (opts *SessionHandlerOpts) GenSession(w http.ResponseWriter, r *http.Request) {
 	writer := writers.New(w, r)
 
 	vector := r.Header.Get("iv")
@@ -41,7 +41,7 @@ func (opts *SessionOpts) GenSession(w http.ResponseWriter, r *http.Request) {
 }
 
 // Microservice from another microservice
-func (opts *SessionOpts) GetSession(w http.ResponseWriter, r *http.Request) {
+func (opts *SessionHandlerOpts) GetSession(w http.ResponseWriter, r *http.Request) {
 	writer := writers.New(w, r)
 
 	// Call session service to get session
@@ -50,7 +50,7 @@ func (opts *SessionOpts) GetSession(w http.ResponseWriter, r *http.Request) {
 }
 
 // All routers
-func (opts *SessionOpts) Route(r chi.Router) {
+func (opts *SessionHandlerOpts) Route(r chi.Router) {
 	r.Get("/", opts.GetSession)
 	r.Post("/generate", opts.GenSession)
 }

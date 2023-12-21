@@ -9,22 +9,22 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type Session interface {
+type SessionCache interface {
 	Save(requestId, sessionId, publicKey string) error
 	GetSession(requestId, sessionId string) string
 	SaveVector(requestId, vector string) error
 	GetVector(requestId, vector string) string
 }
 
-type SessionOpts struct {
+type SessionCacheOpts struct {
 	redisCli *redis.Client
 }
 
-func NewSession(redisCli *redis.Client) Session {
-	return &SessionOpts{redisCli: redisCli}
+func NewSessionCache(redisCli *redis.Client) SessionCache {
+	return &SessionCacheOpts{redisCli: redisCli}
 }
 
-func (opts *SessionOpts) Save(requestId, sessionId, publicKey string) error {
+func (opts *SessionCacheOpts) Save(requestId, sessionId, publicKey string) error {
 	key := configs.RedisConf.SessionInfo.Key + sessionId
 	err := opts.redisCli.Set(context.Background(), key, []byte(publicKey), time.Minute*configs.RedisConf.SessionInfo.ExpireMin).Err()
 	if err != nil {
@@ -33,7 +33,7 @@ func (opts *SessionOpts) Save(requestId, sessionId, publicKey string) error {
 	return err
 }
 
-func (opts *SessionOpts) GetSession(requestId, sessionId string) string {
+func (opts *SessionCacheOpts) GetSession(requestId, sessionId string) string {
 	key := configs.RedisConf.SessionInfo.Key + sessionId
 	result, err := opts.redisCli.Get(context.Background(), key).Result()
 	if err != nil {
@@ -42,7 +42,7 @@ func (opts *SessionOpts) GetSession(requestId, sessionId string) string {
 	return result
 }
 
-func (opts *SessionOpts) SaveVector(requestId, vector string) error {
+func (opts *SessionCacheOpts) SaveVector(requestId, vector string) error {
 	key := configs.RedisConf.SessionVector.Key + vector
 	err := opts.redisCli.Set(context.Background(), key, []byte(vector), time.Minute*configs.RedisConf.SessionVector.ExpireMin).Err()
 	if err != nil {
@@ -51,7 +51,7 @@ func (opts *SessionOpts) SaveVector(requestId, vector string) error {
 	return err
 }
 
-func (opts *SessionOpts) GetVector(requestId, vector string) string {
+func (opts *SessionCacheOpts) GetVector(requestId, vector string) string {
 	key := configs.RedisConf.SessionVector.Key + vector
 	result, err := opts.redisCli.Get(context.Background(), key).Result()
 	if err != nil {

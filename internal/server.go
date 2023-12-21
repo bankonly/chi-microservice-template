@@ -23,7 +23,7 @@ func NewServer() {
 	r.NotFound(middlewares.NotFound)
 	r.Use(internalMiddleware.VerifySession)
 
-	r.Route("/v1/public", routers.PublicRouter)
+	r.Route("/v1", routers.PublicRouter)
 
 	log.Println("Server is started on port", configs.Environment.PORT)
 	http.ListenAndServe(":"+configs.Environment.PORT, r)

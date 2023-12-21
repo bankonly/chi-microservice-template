@@ -8,22 +8,22 @@ import (
 	"github.com/bankonly/go-pkg/v1/encryption"
 )
 
-type Session interface {
+type SessionService interface {
 	GenSession(requestId, vector, token, enk string) (*dto.GenSessionResponseDTO, error)
 	GetSession(requestId string)
 }
 
-type SessionOpts struct {
-	sessionCache caches.Session
+type SessionServiceOpts struct {
+	sessionCache caches.SessionCache
 }
 
-func NewSession(sessionCache caches.Session) Session {
-	return &SessionOpts{
+func NewSessionService(sessionCache caches.SessionCache) SessionService {
+	return &SessionServiceOpts{
 		sessionCache: sessionCache,
 	}
 }
 
-func (opts *SessionOpts) GenSession(requestId, vector, token, enk string) (*dto.GenSessionResponseDTO, error) {
+func (opts *SessionServiceOpts) GenSession(requestId, vector, token, enk string) (*dto.GenSessionResponseDTO, error) {
 	sessionId, err := encryption.RSADecAESRandomKey(enk, token, vector)
 	if err != nil {
 		return nil, errorConf.ErrAccessDenied1
@@ -46,6 +46,6 @@ func (opts *SessionOpts) GenSession(requestId, vector, token, enk string) (*dto.
 	return &res, nil
 }
 
-func (opts *SessionOpts) GetSession(requestId string) {
+func (opts *SessionServiceOpts) GetSession(requestId string) {
 
 }

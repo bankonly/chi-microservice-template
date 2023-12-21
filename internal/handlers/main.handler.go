@@ -8,12 +8,12 @@ import (
 )
 
 type Handlers struct {
-	Session Session
+	Session SessionHandler
 }
 
 func New(services *services.Services) *Handlers {
 	return &Handlers{
-		Session: NewSession(services),
+		Session: NewSessionHandler(services),
 	}
 }
 
