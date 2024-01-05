@@ -11,12 +11,13 @@ func main() {
 	configs.LoadEnvironmentConf()
 	storages.NewPostgres()
 	db := storages.GetPostgresDB()
-
 	g := gen.NewGenerator(gen.Config{
-		ModelPkgPath: "internal/models/entity",
-		Mode:         gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface,
+		FieldNullable:    true,
+		FieldWithTypeTag: true,
+		ModelPkgPath:     "internal/models/entity",
 	})
 
+	g.WithOpts(gen.FieldType("tags", "*[]string"))
 	g.UseDB(db)
 	g.ApplyBasic(g.GenerateAllTable()...)
 	g.Execute()

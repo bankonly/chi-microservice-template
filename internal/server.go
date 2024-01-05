@@ -21,9 +21,10 @@ func NewServer() {
 	r.Use(writers.Middleware)
 	r.Use(middlewares.Recover(configs.Environment.MODE == configs.AppConf.ProdLabel))
 	r.NotFound(middlewares.NotFound)
+	r.MethodNotAllowed(middlewares.MethodNotAllow)
 	r.Use(internalMiddleware.VerifySession)
 
-	r.Route("/v1", routers.PublicRouter)
+	r.Route("/v1/example-service", routers.Router)
 
 	log.Println("Server is started on port", configs.Environment.PORT)
 	http.ListenAndServe(":"+configs.Environment.PORT, r)

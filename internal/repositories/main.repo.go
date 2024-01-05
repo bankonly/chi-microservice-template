@@ -1,8 +1,11 @@
 package repositories
 
+import "gorm.io/gorm"
+
 type Repositories struct {
+	Transaction TransactionRepo
 }
 
-func New() *Repositories {
+func New(db *gorm.DB) *Repositories {
 	return &Repositories{}
 }

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"ecm-api-template/internal/repositories"
 	"ecm-api-template/internal/services"
 	"net/http"
 
@@ -11,7 +12,7 @@ type Handlers struct {
 	Session SessionHandler
 }
 
-func New(services *services.Services) *Handlers {
+func New(repo *repositories.Repositories, services *services.Services) *Handlers {
 	return &Handlers{
 		Session: NewSessionHandler(services),
 	}

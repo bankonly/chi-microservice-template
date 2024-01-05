@@ -27,7 +27,7 @@ func (opts *SessionHandlerOpts) GenSession(w http.ResponseWriter, r *http.Reques
 	writer := writers.New(w, r)
 
 	vector := r.Header.Get("iv")
-	sessionId := r.Header.Get("enk-session")
+	sessionId := r.Header.Get("data")
 	enk := r.Header.Get("enk")
 
 	// Call session service to gen session

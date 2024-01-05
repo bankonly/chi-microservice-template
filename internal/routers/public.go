@@ -1,19 +1,14 @@
 package routers
 
 import (
-	"ecm-api-template/internal/caches"
 	"ecm-api-template/internal/handlers"
-	"ecm-api-template/internal/services"
-	"ecm-api-template/pkg/storages"
 
 	"github.com/go-chi/chi/v5"
 )
 
-func PublicRouter(r chi.Router) {
-	cache := caches.New(storages.GetRedis())
-	service := services.New(cache)
-	handlers := handlers.New(service)
-
-	r.Get("/", handlers.HealthCheck)
-	r.Route("/session", handlers.Session.Route)
+func PublicRouter(handler *handlers.Handlers) func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Get("/", handler.HealthCheck)
+		r.Route("/session", handler.Session.Route)
+	}
 }

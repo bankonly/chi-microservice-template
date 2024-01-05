@@ -33,3 +33,17 @@ func CatchWithNotFoundErr(err error, out error) error {
 	}
 	return nil
 }
+
+func CatchUpdateErr(err error, duplicateErrOut error, notFoundErrOut error) error {
+	if err != nil {
+		if IsDuplicatedError(err) {
+			return duplicateErrOut
+		}
+
+		if err == gorm.ErrRecordNotFound {
+			return notFoundErrOut
+		}
+		return err
+	}
+	return nil
+}
