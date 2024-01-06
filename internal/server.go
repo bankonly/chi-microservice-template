@@ -2,7 +2,6 @@ package internal
 
 import (
 	"ecm-api-template/internal/configs"
-	internalMiddleware "ecm-api-template/internal/middlewares"
 	"ecm-api-template/internal/routers"
 	"ecm-api-template/pkg/middlewares"
 	"log"
@@ -22,7 +21,6 @@ func NewServer() {
 	r.Use(middlewares.Recover(configs.Environment.MODE == configs.AppConf.ProdLabel))
 	r.NotFound(middlewares.NotFound)
 	r.MethodNotAllowed(middlewares.MethodNotAllow)
-	r.Use(internalMiddleware.VerifySession)
 
 	r.Route("/v1/example-service", routers.Router)
 

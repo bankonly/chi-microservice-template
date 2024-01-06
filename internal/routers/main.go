@@ -17,4 +17,5 @@ func Router(r chi.Router) {
 	handlers := handlers.New(repo, service)
 
 	r.Route("/", PublicRouter(handlers))
+	r.Route("/session", SessionRouter(handlers))
 }
